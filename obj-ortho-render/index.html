@@ -64,14 +64,14 @@
 
   <section>
     <h2>快速开始</h2>
-    <pre><code>git clone https://github.com/UVE1048/ObjOrthoRender.git
-cd ObjOrthoRender
-pip install -r requirements.txt
+    <pre><code>pip install objorthorender          # 已在 PyPI 发布
 
-python render_orthophotos.py \
-  --input  path/to/input \
+objorthorender --input  path/to/input \
   --output path/to/output \
-  --gsd 0.05 --workers 4 --merge-mode all</code></pre>
+  --gsd 0.05 --workers 4 --merge-mode all
+
+# 先用自带样例跑通
+objorthorender --input examples/sample --output out --gsd 0.5</code></pre>
     <div class="callout">输入的 metadata.xml 必须与出模时的坐标系一致。SRSOrigin 是模型局部原点对应的真实坐标，写错会导致整体偏移 —— 这是最常见的问题。</div>
   </section>
 
