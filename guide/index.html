@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>从三维模型到建筑图斑：实景三维数据链路完整流程</title>
+<meta name="description" content="倾斜摄影模型如何变成可入库的建筑矢量：正射影像渲染、建筑物轮廓提取、模型训练三个环节的具体命令、关键参数与常见坑。基于开源工具链，全部可脚本化。">
+<meta name="keywords" content="实景三维, 倾斜摄影, 正射影像, DOM, 建筑物轮廓提取, 建筑物提取, 数据链路, 3D Tiles, OBJ, GeoTIFF, Shapefile, 遥感影像处理, 矢量化, orthophoto, building footprint">
+<meta name="author" content="UVE">
+<link rel="canonical" href="https://uve1048.github.io/guide/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UVE · 三维 GIS 与遥感开源工具">
+<meta property="og:title" content="从三维模型到建筑图斑：实景三维数据链路完整流程">
+<meta property="og:description" content="倾斜摄影模型如何变成可入库的建筑矢量：正射影像渲染、建筑物轮廓提取、模型训练三个环节的具体命令、关键参数与常见坑。基于开源工具链，全部可脚本化。">
+<meta property="og:url" content="https://uve1048.github.io/guide/">
+<meta property="og:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="从三维模型到建筑图斑：实景三维数据链路完整流程">
+<meta name="twitter:description" content="倾斜摄影模型如何变成可入库的建筑矢量：正射影像渲染、建筑物轮廓提取、模型训练三个环节的具体命令、关键参数与常见坑。基于开源工具链，全部可脚本化。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
+<link rel="stylesheet" href="/style.css">
+<link rel="alternate" type="text/markdown" href="https://uve1048.github.io/guide/index.md">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "从三维模型到建筑图斑：实景三维数据链路完整流程", "description": "倾斜摄影模型如何变成可入库的建筑矢量：正射影像渲染、建筑物轮廓提取、模型训练三个环节的具体命令、关键参数与常见坑。基于开源工具链，全部可脚本化。", "url": "https://uve1048.github.io/guide/", "inLanguage": "zh-CN", "keywords": "实景三维, 倾斜摄影, 正射影像, DOM, 建筑物轮廓提取, 建筑物提取, 数据链路, 3D Tiles, OBJ, GeoTIFF, Shapefile, 遥感影像处理, 矢量化, orthophoto, building footprint", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "publisher": {"@type": "Organization", "name": "UVE"}, "datePublished": "2026-11-03", "dateModified": "2026-11-03"}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "全部项目", "item": "https://uve1048.github.io/"}, {"@type": "ListItem", "position": 2, "name": "完整流程", "item": "https://uve1048.github.io/guide/"}]}]</script>
+</head>
+<body style="--accent:#1a56db">
+<header class="top"><div class="wrap">
+<a class="brand" href="/">UVE · 开源工具</a>
+<nav>
+<a href="/#projects">项目</a>
+<a href="/guide/">完整流程</a>
+<a href="https://github.com/UVE1048">GitHub</a>
+</nav>
+</div></header>
+<div class="wrap">
+  <nav class="bc"><a href="/">全部项目</a> <span>/</span> <b>完整流程</b></nav>
+  <div class="hero">
+    <span class="eyebrow">Guide · 实景三维数据链路</span>
+    <h1>从三维模型到建筑图斑：实景三维数据链路完整流程</h1>
+    <p class="lede">倾斜摄影模型 → 正射影像 → 建筑物轮廓 → 入库。这条路看起来是三个工具串联，
+    实际上每一段都有自己的坑，而且大部分坑不会报错，只会在最后的成果里以"位置偏了""边缘不对""图斑没法用"
+    的形式暴露出来。下面按生产顺序拆开讲。</p>
+    <div class="btnrow">
+      <a class="btn primary" href="/obj-ortho-render/">正射影像工具</a>
+      <a class="btn" href="/footprint-creater/">建筑物提取工具</a>
+    </div>
+  </div>
+
+  <section><h2>链路总览</h2>
+    <p style="color:#495362">典型的四段，本文覆盖前三段（第四段是人工质检，无法自动化）：</p>
+    <pre><code>倾斜摄影模型 / 3D Tiles
+        │  ① 换成 OBJ（Cesium ion 导出、Metashape、其他转换工具）
+        ▼
+   OBJ + metadata.xml
+        │  ② ObjOrthoRender：分块渲染 + 写地理参考
+        ▼
+   带坐标系的 GeoTIFF（DOM）
+        │  ③ Footprint-Creater：分割 + 校验 + 规则化
+        ▼
+   buildings.shp（可入库）
+        │  ④ 人工质检：套合、拓扑、属性</code></pre>
+    <div class="callout">如果你的模型已经够准、影像也是自己的传感器，第 ③ 步用现成权重就够了。
+    只有当现成模型的精度在你的影像上明显不够时，才需要插入"训练自己的模型"这一段。</div>
+  </section>
+
+  <section><h2>环节一：三维模型 → 正射影像</h2>
+    <p style="color:#495362">制图、变化检测、建筑物提取都需要二维影像，但模型是三维的。
+    这一步的本质是沿 Z 轴正交投影，同时把模型局部坐标换算回真实地理坐标。</p>
+    <pre><code># 先用自带样例确认环境正常（约 60 秒）
+python render_orthophotos.py --input examples/sample --output out --gsd 0.5
+
+# 处理自己的模型
+python render_orthophotos.py \
+  --input  /path/to/obj_tiles \
+  --output /path/to/dom \
+  --gsd 0.05 \
+  --workers 4 \
+  --merge-mode all</code></pre>
+    <h3 style="margin-top:26px">三个关键点</h3>
+    <ul class="pain">
+      <li><b>GSD 决定后续一切。</b>0.05 m 意味着一个像素代表 5 cm。后面的最小建筑面积、平滑距离、
+      简化公差都是以米为单位，进而在像素上体现。<b>GSD 和建筑物提取的参数必须匹配</b>，
+      用 0.5 m 的影像配 100 m² 最小面积，会得到一堆碎块。</li>
+      <li><b>metadata.xml 的 SRSOrigin 是最常见的错误来源。</b>它是模型局部原点对应的真实地理坐标。
+      写错不会报错，结果是整幅影像偏移几百米——直到你把结果叠到正射底图上才会发现。出模时记下这个值。</li>
+      <li><b>无显卡服务器不是问题。</b>Docker 镜像内置 Xvfb + Mesa 软件 OpenGL，纯 CPU 渲染。
+      慢，但批处理场景下稳定比快重要。</li>
+    </ul>
+  </section>
+
+  <section><h2>环节二：正射影像 → 建筑物图斑</h2>
+    <p style="color:#495362">这一步最容易被低估。直接拿语义分割掩码转矢量，得到的是锯齿边、粘连块和碎屑，
+    导入 GIS 之后几乎不可用。真正耗时间的是"掩码 → 可入库图斑"之间那段处理。</p>
+    <pre><code>python web_app.py    # 打开 http://localhost:5000 上传影像
+
+# 或者按下面的参数在界面里配
+BLOCK_SIZE       1024     # 分块推理尺寸，按显存调
+BLOCK_OVERLAP     512     # 建议保持 50%
+MIN_AREA_M2     100.0     # 最小建筑面积
+BUFFER_EXPAND_M   0.6     # 平滑膨胀，米
+BUFFER_SHRINK_M   0.3     # 平滑腐蚀，通常取膨胀的一半
+SIMPLIFY_TOL      0.3     # Douglas-Peucker 公差，米
+RECT_IOU_THRESH  0.90     # 与最小外接矩形重合度超过此值则矩形化</code></pre>
+    <h3 style="margin-top:26px">三个关键点</h3>
+    <ul class="pain">
+      <li><b>黑边必须前置处理。</b>斜切的正射影像四周是黑色 Nodata，模型会稳定地把这片判成建筑，
+      而且连成一片导致面积过滤拦不住。<b>靠事后过滤是治不好的</b>，只能在推理前把干扰区涂黑。</li>
+      <li><b>平滑要用直角连接而不是圆角。</b>建筑的边是直的。用圆弧连接平滑出来的轮廓，
+      在 GIS 里做拓扑检查、和地籍数据套合时都对不上。</li>
+      <li><b>矩形化阈值别调太低。</b>0.90 意味着只有形状已经很接近矩形才强制替换。
+      降到 0.7 会把一些真实的不规则建筑也拍成方块，反而降低可用性。</li>
+    </ul>
+  </section>
+
+  <section><h2>可选环节：现成模型不够准就自己训</h2>
+    <p style="color:#495362">什么情况下该训：高密度城区建筑粘连、屋顶材质差异大导致漏检、
+    阴影方向不同导致边界系统性偏移。判断标准很简单——看错误是否<b>有规律</b>。
+    随机误差靠加数据，系统性偏差只能靠换模型。</p>
+    <pre><code>cp prepare/DATA.example.TXT prepare/DATA.TXT   # 填入影像与矢量路径
+python prepare/prepare_dataset_multiprocess.py  # 滑窗切片
+python train.py                                 # HRNet-W48 + FCNHead
+python predict.py --input mosaic.tif \
+  --checkpoint work_dirs/hrnet_w48_footprint/iter_40000.pth</code></pre>
+    <div class="callout">标签质量决定上限。矢量与影像套合不准时，模型学到的是系统性边界偏移，
+    加再多数据也救不回来。训之前务必抽几处叠加核对。</div>
+  </section>
+
+  <section><h2>环节三：结果能不能入库，怎么判断</h2>
+    <p style="color:#495362">交付前至少查这四件事，都能在 QGIS 里几分钟完成：</p>
+    <table>
+      <thead><tr><th>检查项</th><th>怎么查</th><th>不合格的表现</th></tr></thead>
+      <tbody>
+        <tr><td>坐标系</td><td>图层属性看 CRS</td><td>显示未知或与底图错位</td></tr>
+        <tr><td>套合精度</td><td>叠到原影像，抽 10 处看边</td><td>整体平移或旋转 → 回查 GSD 与 SRSOrigin</td></tr>
+        <tr><td>几何有效性</td><td>拓扑检查器跑自相交</td><td>有自相交面 → 简化公差可能过大</td></tr>
+        <tr><td>面积分布</td><td>统计字段直方图</td><td>出现大量 &lt; 20 m² 图斑 → 最小面积阈值偏低</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section><h2>常见问题速查</h2>
+    <div class="faq">
+      <details><summary>正射影像整体偏移了几百米？</summary>
+        <p>九成是 metadata.xml 的 SRSOrigin 与出模时不一致。其次是 SRS 写成了 EPSG:4326 而实际是 3857。</p></details>
+      <details><summary>输出一片全黑？</summary>
+        <p>OpenGL 没起来。Docker 下确认 DISPLAY=:99 与 Xvfb；本机跑先执行 glxinfo | grep OpenGL 看有没有 3.3+。</p></details>
+      <details><summary>提取结果边缘锯齿严重？</summary>
+        <p>说明跳过了规则化，或者 SIMPLIFY_TOL 设得过小。默认 0.3 m 是配合 0.05–0.1 m GSD 的经验值。</p></details>
+      <details><summary>大范围生产时合并阶段内存爆掉？</summary>
+        <p>改用 --merge-mode subfolder，或用 --subdir 按区块分批处理。all 模式会把全部影像并成一张巨型 TIFF。</p></details>
+      <details><summary>能直接处理 3D Tiles 吗？</summary>
+        <p>不能，链路第一段需要先把 3D Tiles 转成 OBJ（Cesium ion 导出或第三方转换工具）。本工具从 OBJ 开始。</p></details>
+    </div>
+  </section>
+
+  <section><h2>相关项目</h2>
+    <div class="cards">
+      <a class="card" href="/obj-ortho-render/"><div class="t">ObjOrthoRender</div>
+        <div class="s">环节一</div><p class="d">把 OBJ 模型渲染成带地理参考的 GeoTIFF。</p></a>
+      <a class="card" href="/footprint-creater/"><div class="t">Footprint-Creater</div>
+        <div class="s">环节二</div><p class="d">从正射影像提取建筑物轮廓，输出 Shapefile。</p></a>
+      <a class="card" href="/hrnet-footprint-trainer/"><div class="t">HRNet-Footprint-Trainer</div>
+        <div class="s">可选环节</div><p class="d">在自己的影像上训练分割模型。</p></a>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a></div></footer>
+</body>
+</html>

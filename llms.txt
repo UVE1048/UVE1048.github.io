@@ -46,6 +46,13 @@ Design and implementation notes for projecting live UAV video onto 3D reality-me
 - 别名: 视频融合示例, 无人机视频投影, 视频贴模型, 视频投射 SDK 用法, video projection onto 3D model, UAV video fusion
 - 关键词: 视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin
 
+## 完整流程指南
+
+从三维模型到建筑图斑的端到端流程：正射影像渲染、建筑物轮廓提取、模型训练三段的具体命令、关键参数与常见坑。
+
+- HTML: https://uve1048.github.io/guide/
+- Markdown: https://uve1048.github.io/guide/index.md
+
 ## 机器可读索引
 
 - 全量文本: https://uve1048.github.io/llms-full.txt
