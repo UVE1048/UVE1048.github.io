@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UVE · 三维 GIS、摄影测量与遥感影像处理开源工具</title>
+<meta name="description" content="三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。">
+<meta name="keywords" content="正射影像, DOM, 建筑物轮廓提取, 建筑物提取, 遥感影像, 语义分割, HRNet, 视频融合, 数字孪生, 倾斜摄影, 实景三维, GIS, 摄影测量, orthophoto, building footprint, digital twin">
+<meta name="author" content="UVE">
+<link rel="canonical" href="https://uve1048.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UVE · 三维 GIS 与遥感开源工具">
+<meta property="og:title" content="UVE · 三维 GIS、摄影测量与遥感影像处理开源工具">
+<meta property="og:description" content="三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。">
+<meta property="og:url" content="https://uve1048.github.io/">
+<meta property="og:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="UVE · 三维 GIS、摄影测量与遥感影像处理开源工具">
+<meta name="twitter:description" content="三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "UVE · 三维 GIS 与遥感开源工具", "description": "三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。", "url": "https://uve1048.github.io/", "hasPart": [{"@type": "SoftwareApplication", "name": "ObjOrthoRender", "url": "https://uve1048.github.io/obj-ortho-render/"}, {"@type": "SoftwareApplication", "name": "Footprint-Creater", "url": "https://uve1048.github.io/footprint-creater/"}, {"@type": "SoftwareApplication", "name": "HRNet-Footprint-Trainer", "url": "https://uve1048.github.io/hrnet-footprint-trainer/"}, {"@type": "SoftwareApplication", "name": "VideoFusion-Web", "url": "https://uve1048.github.io/video-fusion-web/"}]}</script>
+</head>
+<body style="--accent:#1a56db">
+<header class="top"><div class="wrap">
+<a class="brand" href="/">UVE · 开源工具</a>
+<nav>
+<a href="/#projects">项目</a>
+<a href="https://github.com/UVE1048">GitHub</a>
+</nav>
+</div></header>
+<div class="wrap">
+  <div class="hero">
+    <span class="eyebrow">Open Source · 开源项目</span>
+    <h1>把实景三维链路里只能靠商业软件点鼠标的环节，做成可脚本化的工具</h1>
+    <p class="lede">四个面向实景三维生产的开源项目：三维模型转正射影像、正射影像建筑物轮廓提取、
+    建筑物分割模型训练、无人机视频融合投射。全部以 MIT 协议开源。</p>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048">GitHub</a>
+      <a class="btn" href="#projects">浏览项目</a>
+    </div>
+  </div>
+
+  <section id="projects">
+    <h2>项目</h2>
+    <div class="cards">
+    <a class="card" href="/obj-ortho-render/">
+      <div class="t">ObjOrthoRender</div>
+      <div class="s">OBJ 三维模型转带地理参考的正射影像</div>
+      <p class="d">倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。</p>
+      <div class="tags"><span>正射影像</span><span> DOM</span><span> 数字正射影像图</span><span> OBJ 转 GeoTIFF</span></div>
+    </a>
+    <a class="card" href="/footprint-creater/">
+      <div class="t">Footprint-Creater</div>
+      <div class="s">正射影像自动提取建筑物轮廓</div>
+      <p class="d">给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。</p>
+      <div class="tags"><span>建筑物轮廓提取</span><span> 建筑物提取</span><span> 房屋面提取</span><span> 建筑图斑</span></div>
+    </a>
+    <a class="card" href="/hrnet-footprint-trainer/">
+      <div class="t">HRNet-Footprint-Trainer</div>
+      <div class="s">在自有影像上训练建筑物分割模型</div>
+      <p class="d">公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。</p>
+      <div class="tags"><span>建筑物分割训练</span><span> 语义分割训练</span><span> HRNet-W48</span><span> MMSegmentation</span></div>
+    </a>
+    <a class="card" href="/video-fusion-web/">
+      <div class="t">VideoFusion-Web</div>
+      <div class="s">无人机视频融合投射到三维实景</div>
+      <p class="d">与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。</p>
+      <div class="tags"><span>视频融合</span><span> 视频投射</span><span> 视频投影</span><span> 无人机视频</span></div>
+    </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>技术方向</h2>
+    <table>
+      <thead><tr><th>领域</th><th>关键词</th></tr></thead>
+      <tbody>
+        <tr><td>实景三维</td><td>倾斜摄影 · 3D Tiles · 正射影像生产 · 网格简化</td></tr>
+        <tr><td>遥感智能解译</td><td>语义分割 · 建筑物提取 · 大图推理 · 矢量化后处理</td></tr>
+        <tr><td>数字孪生</td><td>视频融合 · 场景控制 · Cesium · UE5</td></tr>
+        <tr><td>工程化</td><td>命令行工具 · Docker · 批处理流水线</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>关于</h2>
+    <p style="color:#495362">这些工具都来自实际生产中的卡点：批处理几千个模型、在没有显卡的服务器上出图、
+    让矢量化结果真的能入库、把无人机画面投到三维场景上。如果你也遇到同样的问题，欢迎在仓库提 Issue。</p>
+  </section>
+</div>
+<footer><div class="wrap">
+  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
+</div></footer>
+</body>
+</html>

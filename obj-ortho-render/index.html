@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>把 OBJ 模型变成能进 GIS 的正射影像 — ObjOrthoRender</title>
+<meta name="description" content="倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。">
+<meta name="keywords" content="正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio">
+<meta name="author" content="UVE">
+<link rel="canonical" href="https://uve1048.github.io/obj-ortho-render/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UVE · 三维 GIS 与遥感开源工具">
+<meta property="og:title" content="把 OBJ 模型变成能进 GIS 的正射影像 — ObjOrthoRender">
+<meta property="og:description" content="倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。">
+<meta property="og:url" content="https://uve1048.github.io/obj-ortho-render/">
+<meta property="og:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="把 OBJ 模型变成能进 GIS 的正射影像 — ObjOrthoRender">
+<meta name="twitter:description" content="倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "ObjOrthoRender", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。", "url": "https://uve1048.github.io/obj-ortho-render/", "codeRepository": "https://github.com/UVE1048/ObjOrthoRender", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+</head>
+<body style="--accent:#2f6feb">
+<header class="top"><div class="wrap">
+<a class="brand" href="/">UVE · 开源工具</a>
+<nav>
+<a href="/#projects">项目</a>
+<a href="https://github.com/UVE1048">GitHub</a>
+</nav>
+</div></header>
+<div class="wrap">
+  <div class="hero">
+    <a class="backlink" href="/">← 全部项目</a>
+    <span class="eyebrow">OBJ 三维模型转带地理参考的正射影像</span>
+    <h1>把 OBJ 模型变成能进 GIS 的正射影像</h1>
+    <p class="lede">倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。</p>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048/ObjOrthoRender">查看源码</a>
+      <a class="btn" href="https://github.com/UVE1048/ObjOrthoRender/stargazers">Star</a>
+    </div>
+  </div>
+
+  <section>
+    <h2>你会遇到的问题</h2>
+    <ul class="pain"><li>商业三维软件能导出正射，但要人守着点鼠标，上千个图块没法批处理。</li>
+<li>换成写脚本吧，OpenGL 一吃显存就崩，单个模型的面数和纹理尺寸都能顶到上限。</li>
+<li>生产环境是台没有独显的服务器，任何依赖硬件 OpenGL 的方案直接卡死。</li></ul>
+  </section>
+
+  <section>
+    <h2>它怎么解决</h2>
+    <ol class="how"><li><h3>分块渲染</h3><p>单个超大模型内部再切 tile，逐块渲染并直接写入 GeoTIFF，绕开纹理尺寸与显存上限。</p></li>
+<li><h3>地理参考</h3><p>读 metadata.xml 的 SRS 与 SRSOrigin，把坐标系和原点写进输出，QGIS 打开即定位。</p></li>
+<li><h3>无显卡可跑</h3><p>Docker 镜像内置 Xvfb + Mesa 软件 OpenGL，服务器没有 GPU 也能出图，慢但不失败。</p></li>
+<li><h3>三级合并</h3><p>all / subfolder / none 三种策略，合并优先走 osgeo.gdal，大范围批产可控内存。</p></li></ol>
+  </section>
+
+  <section>
+    <h2>快速开始</h2>
+    <pre><code>git clone https://github.com/UVE1048/ObjOrthoRender.git
+cd ObjOrthoRender
+pip install -r requirements.txt
+
+python render_orthophotos.py \
+  --input  path/to/input \
+  --output path/to/output \
+  --gsd 0.05 --workers 4 --merge-mode all</code></pre>
+    <div class="callout">输入的 metadata.xml 必须与出模时的坐标系一致。SRSOrigin 是模型局部原点对应的真实坐标，写错会导致整体偏移 —— 这是最常见的问题。</div>
+  </section>
+
+  <section>
+    <h2>参数</h2>
+    <table><thead><tr><th>参数</th><th>默认</th><th>说明</th></tr></thead>
+    <tbody><tr><td>--input</td><td>必填</td><td>输入目录，递归查找 .obj</td></tr>
+<tr><td>--output</td><td>&lt;input&gt;/MergedDOM</td><td>输出目录</td></tr>
+<tr><td>--metadata</td><td>&lt;input&gt;/metadata.xml</td><td>可指定任意路径</td></tr>
+<tr><td>--gsd</td><td>0.05</td><td>地面采样距离，米/像素</td></tr>
+<tr><td>--workers</td><td>CPU 核数</td><td>并行进程数</td></tr>
+<tr><td>--merge-mode</td><td>all</td><td>all / subfolder / none</td></tr>
+<tr><td>--fill-holes</td><td>on</td><td>off / on / fast / strong</td></tr></tbody></table>
+  </section>
+
+  <section>
+    <h2>继续</h2>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048/ObjOrthoRender">在 GitHub 上查看 ObjOrthoRender</a>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">
+  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
+</div></footer>
+</body>
+</html>

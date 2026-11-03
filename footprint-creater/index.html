@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>从正射影像提取能直接入库的建筑图斑 — Footprint-Creater</title>
+<meta name="description" content="给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。">
+<meta name="keywords" content="建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation">
+<meta name="author" content="UVE">
+<link rel="canonical" href="https://uve1048.github.io/footprint-creater/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UVE · 三维 GIS 与遥感开源工具">
+<meta property="og:title" content="从正射影像提取能直接入库的建筑图斑 — Footprint-Creater">
+<meta property="og:description" content="给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。">
+<meta property="og:url" content="https://uve1048.github.io/footprint-creater/">
+<meta property="og:image" content="https://raw.githubusercontent.com/UVE1048/Footprint-Creater/main/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="从正射影像提取能直接入库的建筑图斑 — Footprint-Creater">
+<meta name="twitter:description" content="给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/Footprint-Creater/main/assets/social-preview.png">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Footprint-Creater", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。", "url": "https://uve1048.github.io/footprint-creater/", "codeRepository": "https://github.com/UVE1048/Footprint-Creater", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+</head>
+<body style="--accent:#0d766e">
+<header class="top"><div class="wrap">
+<a class="brand" href="/">UVE · 开源工具</a>
+<nav>
+<a href="/#projects">项目</a>
+<a href="https://github.com/UVE1048">GitHub</a>
+</nav>
+</div></header>
+<div class="wrap">
+  <div class="hero">
+    <a class="backlink" href="/">← 全部项目</a>
+    <span class="eyebrow">正射影像自动提取建筑物轮廓</span>
+    <h1>从正射影像提取能直接入库的建筑图斑</h1>
+    <p class="lede">给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。</p>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048/Footprint-Creater">查看源码</a>
+      <a class="btn" href="https://github.com/UVE1048/Footprint-Creater/stargazers">Star</a>
+    </div>
+  </div>
+
+  <section>
+    <h2>你会遇到的问题</h2>
+    <ul class="pain"><li>现成的分割模型直接转矢量，得到的是一堆锯齿边、粘连块和碎屑，导入 GIS 之后还得人工重画。</li>
+<li>大影像装不进显存，分块推理拼回来又会在接缝处产生假轮廓。</li>
+<li>正射影像四周是黑的，模型会稳定地把黑边识别成大片区建筑，面积过滤还拦不住。</li></ul>
+  </section>
+
+  <section>
+    <h2>它怎么解决</h2>
+    <ol class="how"><li><h3>掩码前置</h3><p>推理前就用 Nodata、纯黑、植被、阴影掩码把干扰区涂黑，推理后再强制剔除。这是针对黑边误检的关键。</p></li>
+<li><h3>全局校验</h3><p>各块推理完先 OR 合并成全局掩码，再做轮廓校验（面积、宽度、矩形度、实心度、植被冲突、阴影支撑），而不是逐块美化后拼接。</p></li>
+<li><h3>保直角平滑</h3><p>用 join_style=mitre 先膨胀后腐蚀，保持直线和直角，不做圆角化 —— 建筑的边是直的。</p></li>
+<li><h3>简化与矩形化</h3><p>Douglas-Peucker 简化后，若与最小外接矩形 IoU 超过阈值则替换为规则矩形。</p></li></ol>
+  </section>
+
+  <section>
+    <h2>快速开始</h2>
+    <pre><code>git clone https://github.com/UVE1048/Footprint-Creater.git
+cd Footprint-Creater
+pip install -r requirements.txt
+python scripts/download_models.py     # 预训练权重，约 773 MB
+
+python web_app.py                     # 打开 http://localhost:5000</code></pre>
+    <div class="callout">影像必须是带地理参考的正射影像。没有像素大小和坐标系，面积过滤会失效，SHP 也无法定位 —— 这是新手最常踩的坑。</div>
+  </section>
+
+  <section>
+    <h2>参数</h2>
+    <table><thead><tr><th>参数</th><th>默认</th><th>说明</th></tr></thead>
+    <tbody><tr><td>BLOCK_SIZE</td><td>1024</td><td>分块推理像素尺寸，显存不足调小</td></tr>
+<tr><td>BLOCK_OVERLAP</td><td>512</td><td>分块重叠，建议保持 50%</td></tr>
+<tr><td>MIN_AREA_M2</td><td>100.0</td><td>最小建筑面积，过滤噪点</td></tr>
+<tr><td>BUFFER_EXPAND_M</td><td>0.6</td><td>平滑膨胀距离，米</td></tr>
+<tr><td>BUFFER_SHRINK_M</td><td>0.3</td><td>平滑腐蚀距离，米</td></tr>
+<tr><td>SIMPLIFY_TOL</td><td>0.3</td><td>Douglas-Peucker 公差，米</td></tr>
+<tr><td>RECT_IOU_THRESH</td><td>0.90</td><td>矩形化 IoU 阈值</td></tr></tbody></table>
+  </section>
+
+  <section>
+    <h2>继续</h2>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048/Footprint-Creater">在 GitHub 上查看 Footprint-Creater</a>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">
+  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
+</div></footer>
+</body>
+</html>

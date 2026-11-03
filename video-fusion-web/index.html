@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>把无人机画面直接投到三维模型上 — VideoFusion-Web</title>
+<meta name="description" content="与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。">
+<meta name="keywords" content="视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin">
+<meta name="author" content="UVE">
+<link rel="canonical" href="https://uve1048.github.io/video-fusion-web/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UVE · 三维 GIS 与遥感开源工具">
+<meta property="og:title" content="把无人机画面直接投到三维模型上 — VideoFusion-Web">
+<meta property="og:description" content="与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。">
+<meta property="og:url" content="https://uve1048.github.io/video-fusion-web/">
+<meta property="og:image" content="https://raw.githubusercontent.com/UVE1048/VideoFusion-Web/main/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="把无人机画面直接投到三维模型上 — VideoFusion-Web">
+<meta name="twitter:description" content="与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/VideoFusion-Web/main/assets/social-preview.png">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "VideoFusion-Web", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。", "url": "https://uve1048.github.io/video-fusion-web/", "codeRepository": "https://github.com/UVE1048/VideoFusion-Web", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+</head>
+<body style="--accent:#0891b2">
+<header class="top"><div class="wrap">
+<a class="brand" href="/">UVE · 开源工具</a>
+<nav>
+<a href="/#projects">项目</a>
+<a href="https://github.com/UVE1048">GitHub</a>
+</nav>
+</div></header>
+<div class="wrap">
+  <div class="hero">
+    <a class="backlink" href="/">← 全部项目</a>
+    <span class="eyebrow">无人机视频融合投射到三维实景</span>
+    <h1>把无人机画面直接投到三维模型上</h1>
+    <p class="lede">与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。</p>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048/VideoFusion-Web">查看源码</a>
+      <a class="btn" href="https://github.com/UVE1048/VideoFusion-Web/stargazers">Star</a>
+    </div>
+  </div>
+
+  <section>
+    <h2>你会遇到的问题</h2>
+    <ul class="pain"><li>画面在小窗里，三维场景在背后，两者之间靠人脑映射。紧急情况下这个映射成本很高。</li>
+<li>投影位置偏一点，整幅画面就错位。位姿、FOV、画幅、模型坐标系，任一项不对都不行。</li>
+<li>多路同时投射会互相干扰，WebGL 下多路视频纹理的显存开销也很陡。</li></ul>
+  </section>
+
+  <section>
+    <h2>它怎么解决</h2>
+    <ol class="how"><li><h3>位姿一次算对</h3><p>位置、姿态、FOV、画幅是一组强耦合参数。校验办法是在场景里放已知坐标的地面标记，让视频里的同一地物正好压上去。</p></li>
+<li><h3>单路激活</h3><p>同一时刻只开一路投射，其余仅保留位置指示。这是刻意的产品逻辑，不是没做多路。</p></li>
+<li><h3>video 元素复用</h3><p>切换无人机时不重建 video，而是把它重新绑定到另一个投射对象，避免解码器反复初始化的卡顿。</p></li>
+<li><h3>连线跟相机走</h3><p>小窗到无人机的连线必须在渲染循环里更新，否则相机一动连线就脱节。</p></li></ol>
+  </section>
+
+  <section>
+    <h2>快速开始</h2>
+    <pre><code># 本仓库为设计文档，不含可运行源码
+# 复刻时的目录划分与命令约定：
+
+npm install                                  # 前端依赖
+cd stream_server &amp;&amp; npm install &amp;&amp; npm start # 本地流服务，8088
+npm run dev                                  # 前端</code></pre>
+    <div class="callout">本仓库只包含设计与实现要点，不含源码。视频融合真正难的不是调 API，而是位姿对齐与多路流状态管理 —— 这两件事的结论比代码更难复现，所以先写清楚。</div>
+  </section>
+
+  <section>
+    <h2>参数</h2>
+    <table><thead><tr><th>参数</th><th>默认</th><th>说明</th></tr></thead>
+    <tbody><tr><td>ESVideoFusion</td><td>—</td><td>EarthSDK3 的视频投射对象</td></tr>
+<tr><td>drones.js</td><td>—</td><td>位置/姿态/FOV/画幅/视频地址</td></tr>
+<tr><td>:8088</td><td>—</td><td>本地 HLS 服务端口</td></tr></tbody></table>
+  </section>
+
+  <section>
+    <h2>继续</h2>
+    <div class="btnrow">
+      <a class="btn primary" href="https://github.com/UVE1048/VideoFusion-Web">在 GitHub 上查看 VideoFusion-Web</a>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">
+  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
+</div></footer>
+</body>
+</html>

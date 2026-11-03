@@ -1,0 +1,80 @@
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:#1a1f2e;
+  font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans GB","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased}
+a{color:#1a56db;text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+
+header.top{border-bottom:1px solid #eceef1;background:#fff;position:sticky;top:0;z-index:10}
+header.top .wrap{display:flex;align-items:center;gap:20px;height:60px}
+header.top .brand{font-weight:600;font-size:15px;letter-spacing:.02em;color:#1a1f2e}
+header.top nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+header.top nav a{color:#5b6472}
+header.top nav a:hover{color:#1a56db}
+
+.hero{padding:64px 0 44px;border-bottom:1px solid #eceef1}
+.hero h1{font-size:clamp(26px,4vw,38px);line-height:1.32;margin:0 0 18px;letter-spacing:-.01em;font-weight:700}
+.hero p.lede{font-size:17px;color:#495362;margin:0;max-width:70ch}
+.hero .eyebrow{display:inline-block;font-size:13px;letter-spacing:.08em;color:#8a93a0;
+  text-transform:uppercase;margin-bottom:18px}
+
+section{padding:44px 0;border-bottom:1px solid #eceef1}
+section:last-of-type{border-bottom:0}
+h2{font-size:20px;margin:0 0 20px;letter-spacing:-.01em;font-weight:650}
+h3{font-size:15px;margin:0 0 6px;font-weight:650}
+
+ul.pain{margin:0;padding-left:0;list-style:none}
+ul.pain li{position:relative;padding-left:22px;margin-bottom:12px;color:#495362}
+ul.pain li::before{content:"";position:absolute;left:4px;top:11px;width:5px;height:5px;
+  border-radius:50%;background:#c9403a}
+
+ol.how{margin:0;padding-left:0;list-style:none;counter-reset:h}
+ol.how li{counter-increment:h;position:relative;padding-left:40px;margin-bottom:22px}
+ol.how li::before{content:counter(h);position:absolute;left:0;top:1px;width:26px;height:26px;
+  border-radius:8px;background:#f4f5f7;color:#5b6472;font-size:13px;font-weight:600;
+  display:flex;align-items:center;justify-content:center}
+ol.how p{margin:0;color:#495362}
+
+pre{background:#f7f8fa;border:1px solid #eceef1;border-radius:10px;padding:18px 20px;
+  overflow-x:auto;margin:0;font-size:13.5px;line-height:1.65}
+code{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace}
+p code,li code,td code{background:#f4f5f7;padding:2px 6px;border-radius:5px;font-size:13px}
+
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid #eceef1;vertical-align:top}
+th{font-weight:600;color:#5b6472;font-size:13px;letter-spacing:.03em;text-transform:uppercase}
+td:first-child{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;white-space:nowrap}
+td:nth-child(2){color:#8a93a0;white-space:nowrap}
+
+.callout{background:#fbfbfc;border:1px solid #eceef1;border-left:3px solid var(--accent,#1a56db);
+  border-radius:0 8px 8px 0;padding:16px 20px;font-size:14.5px;color:#495362;margin-top:24px}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{display:inline-block;padding:11px 20px;border-radius:8px;font-size:14.5px;font-weight:500;
+  border:1px solid #d8dce3;color:#1a1f2e;background:#fff}
+.btn:hover{text-decoration:none;border-color:#1a56db;color:#1a56db}
+.btn.primary{background:#1a1f2e;border-color:#1a1f2e;color:#fff}
+.btn.primary:hover{background:#2b3244;color:#fff;border-color:#2b3244}
+
+.cards{display:grid;gap:16px}
+.card{display:block;border:1px solid #eceef1;border-radius:12px;padding:24px 26px;
+  transition:border-color .15s,box-shadow .15s}
+.card:hover{border-color:#d8dce3;box-shadow:0 2px 12px rgba(20,30,50,.05);text-decoration:none}
+.card .t{font-size:16.5px;font-weight:650;color:#1a1f2e;margin-bottom:4px}
+.card .s{font-size:14px;color:#8a93a0;margin-bottom:12px}
+.card .d{font-size:14.5px;color:#495362;margin:0}
+.card .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.card .tags span{font-size:12.5px;color:#5b6472;background:#f4f5f7;padding:3px 10px;border-radius:999px}
+
+footer{padding:40px 0 56px;font-size:13.5px;color:#8a93a0}
+footer a{color:#5b6472}
+
+.backlink{font-size:14px;display:inline-block;margin-bottom:26px;color:#8a93a0}
+@media(max-width:640px){
+  .hero{padding:40px 0 32px}
+  section{padding:34px 0}
+  header.top nav{display:none}
+  th,td{padding:9px 10px}
+}
