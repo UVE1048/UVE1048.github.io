@@ -23,6 +23,7 @@ Automatic building footprint extraction from orthophotos: HRNet segmentation wit
 - HTML: https://uve1048.github.io/footprint-creater/
 - Markdown: https://uve1048.github.io/footprint-creater/index.md
 - 源码: https://github.com/UVE1048/Footprint-Creater
+- 权重: https://huggingface.co/Uve1048/hrnet-w48-footprint
 - 别名: 建筑物提取工具, 房屋面提取, 建筑轮廓矢量化, 建筑物普查, building polygon extraction, footprint extraction tool, 建筑图斑提取
 - 关键词: 建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation
 
@@ -33,6 +34,7 @@ Train HRNet building-footprint segmentation on your own imagery: sliding-window 
 - HTML: https://uve1048.github.io/hrnet-footprint-trainer/
 - Markdown: https://uve1048.github.io/hrnet-footprint-trainer/index.md
 - 源码: https://github.com/UVE1048/HRNet-Footprint-Trainer
+- 权重: https://huggingface.co/Uve1048/hrnet-w48-footprint
 - 别名: 建筑物分割训练, HRNet 训练脚本, 遥感分割训练模板, 建筑物提取模型训练, building segmentation training, HRNet segmentation pipeline
 - 关键词: 建筑物分割训练, 语义分割训练, HRNet-W48, MMSegmentation, OpenMMLab, 遥感深度学习, 滑窗切片, 大图推理, 数据集生成, 建筑物提取, HRNet training, remote sensing segmentation
 
