@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>从正射影像提取能直接入库的建筑图斑 — Footprint-Creater</title>
 <meta name="description" content="给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。">
-<meta name="keywords" content="建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation">
+<meta name="keywords" content="建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation, 建筑物提取工具, 房屋面提取, 建筑轮廓矢量化, 建筑物普查, building polygon extraction, footprint extraction tool, 建筑图斑提取">
 <meta name="author" content="UVE">
 <link rel="canonical" href="https://uve1048.github.io/footprint-creater/">
 <meta property="og:type" content="website">
@@ -19,7 +19,8 @@
 <meta name="twitter:description" content="给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/Footprint-Creater/main/assets/social-preview.png">
 <link rel="stylesheet" href="/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Footprint-Creater", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。", "url": "https://uve1048.github.io/footprint-creater/", "codeRepository": "https://github.com/UVE1048/Footprint-Creater", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+<link rel="alternate" type="text/markdown" href="https://uve1048.github.io/footprint-creater/index.md">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Footprint-Creater", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。", "url": "https://uve1048.github.io/footprint-creater/", "codeRepository": "https://github.com/UVE1048/Footprint-Creater", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation, 建筑物提取工具, 房屋面提取, 建筑轮廓矢量化, 建筑物普查, building polygon extraction, footprint extraction tool, 建筑图斑提取", "alternateName": ["建筑物提取工具", "房屋面提取", "建筑轮廓矢量化", "建筑物普查", "building polygon extraction", "footprint extraction tool", "建筑图斑提取"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "全部项目", "item": "https://uve1048.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Footprint-Creater", "item": "https://uve1048.github.io/footprint-creater/"}]}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "怎么从正射影像自动提取建筑物轮廓？", "acceptedAnswer": {"@type": "Answer", "text": "启动 web_app.py 打开控制台，上传带地理参考的 .tif，点开始处理。程序会执行分块推理、全局轮廓校验、简化与矩形化，最后输出 buildings.shp 及预览图。"}}, {"@type": "Question", "name": "提取出来的轮廓边缘很锯齿、还有粘连怎么办？", "acceptedAnswer": {"@type": "Answer", "text": "这是直接拿语义分割掩码转矢量的典型结果。本项目在转矢量前做了全局轮廓校验（面积、宽度、矩形度、实心度、植被冲突、阴影支撑），之后再用 mitre 保直角平滑，最后做 Douglas-Peucker 简化，IoU 超过阈值的图斑替换为规则矩形。"}}, {"@type": "Question", "name": "为什么影像黑边会被识别成大片建筑物？", "acceptedAnswer": {"@type": "Answer", "text": "斜切的正射影像四周是黑色 Nodata，分割模型会稳定地把这块区域判成建筑，而且连成一片导致面积过滤拦不住。本项目在推理前就用 Nodata、纯黑、植被、阴影掩码把干扰区涂黑，推理后再强制从结果剔除。"}}, {"@type": "Question", "name": "输出的 Shapefile 在 ArcGIS 里没有坐标系？", "acceptedAnswer": {"@type": "Answer", "text": "输出时会尽量把 CRS 转成整数 EPSG 码再写出，保证 .prj 被正确识别；拿不到 EPSG 时退回原始 CRS WKT 并手工补写 .prj 文件。"}}, {"@type": "Question", "name": "跑一张影像需要多少显存？", "acceptedAnswer": {"@type": "Answer", "text": "8 GB 显存下 BLOCK_SIZE=1024、BLOCK_OVERLAP=512 是稳妥配置。显存不足就调小 BLOCK_SIZE，大建筑常被切断时调大。"}}]}]</script>
 </head>
 <body style="--accent:#0d766e">
 <header class="top"><div class="wrap">
@@ -30,16 +31,21 @@
 </nav>
 </div></header>
 <div class="wrap">
+  <nav class="bc" aria-label="breadcrumb"><a href="/">全部项目</a> <span>/</span> <b>Footprint-Creater</b></nav>
   <div class="hero">
-    <a class="backlink" href="/">← 全部项目</a>
     <span class="eyebrow">正射影像自动提取建筑物轮廓</span>
     <h1>从正射影像提取能直接入库的建筑图斑</h1>
     <p class="lede">给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。</p>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/Footprint-Creater">查看源码</a>
-      <a class="btn" href="https://github.com/UVE1048/Footprint-Creater/stargazers">Star</a>
+      <a class="btn" href="https://uve1048.github.io/footprint-creater/index.md">Markdown 版</a>
     </div>
   </div>
+
+  <section>
+    <h2>别名与同义词</h2>
+    <div class="aliases"><span class="al">建筑物提取工具</span><span class="al">房屋面提取</span><span class="al">建筑轮廓矢量化</span><span class="al">建筑物普查</span><span class="al">building polygon extraction</span><span class="al">footprint extraction tool</span><span class="al">建筑图斑提取</span></div>
+  </section>
 
   <section>
     <h2>你会遇到的问题</h2>
@@ -80,14 +86,20 @@ python web_app.py                     # 打开 http://localhost:5000</code></pre
   </section>
 
   <section>
-    <h2>继续</h2>
+    <h2>常见问题</h2>
+    <div class="faq"><details><summary>怎么从正射影像自动提取建筑物轮廓？</summary><p>启动 web_app.py 打开控制台，上传带地理参考的 .tif，点开始处理。程序会执行分块推理、全局轮廓校验、简化与矩形化，最后输出 buildings.shp 及预览图。</p></details>
+<details><summary>提取出来的轮廓边缘很锯齿、还有粘连怎么办？</summary><p>这是直接拿语义分割掩码转矢量的典型结果。本项目在转矢量前做了全局轮廓校验（面积、宽度、矩形度、实心度、植被冲突、阴影支撑），之后再用 mitre 保直角平滑，最后做 Douglas-Peucker 简化，IoU 超过阈值的图斑替换为规则矩形。</p></details>
+<details><summary>为什么影像黑边会被识别成大片建筑物？</summary><p>斜切的正射影像四周是黑色 Nodata，分割模型会稳定地把这块区域判成建筑，而且连成一片导致面积过滤拦不住。本项目在推理前就用 Nodata、纯黑、植被、阴影掩码把干扰区涂黑，推理后再强制从结果剔除。</p></details>
+<details><summary>输出的 Shapefile 在 ArcGIS 里没有坐标系？</summary><p>输出时会尽量把 CRS 转成整数 EPSG 码再写出，保证 .prj 被正确识别；拿不到 EPSG 时退回原始 CRS WKT 并手工补写 .prj 文件。</p></details>
+<details><summary>跑一张影像需要多少显存？</summary><p>8 GB 显存下 BLOCK_SIZE=1024、BLOCK_OVERLAP=512 是稳妥配置。显存不足就调小 BLOCK_SIZE，大建筑常被切断时调大。</p></details></div>
+  </section>
+
+  <section>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/Footprint-Creater">在 GitHub 上查看 Footprint-Creater</a>
     </div>
   </section>
 </div>
-<footer><div class="wrap">
-  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
-</div></footer>
+<footer><div class="wrap">以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a></div></footer>
 </body>
 </html>

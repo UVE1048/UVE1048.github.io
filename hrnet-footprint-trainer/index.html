@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>用你自己的影像训一个建筑分割模型 — HRNet-Footprint-Trainer</title>
 <meta name="description" content="公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。">
-<meta name="keywords" content="建筑物分割训练, 语义分割训练, HRNet-W48, MMSegmentation, OpenMMLab, 遥感深度学习, 滑窗切片, 大图推理, 数据集生成, 建筑物提取, HRNet training, remote sensing segmentation">
+<meta name="keywords" content="建筑物分割训练, 语义分割训练, HRNet-W48, MMSegmentation, OpenMMLab, 遥感深度学习, 滑窗切片, 大图推理, 数据集生成, 建筑物提取, HRNet training, remote sensing segmentation, 建筑物分割训练, HRNet 训练脚本, 遥感分割训练模板, 建筑物提取模型训练, building segmentation training, HRNet segmentation pipeline">
 <meta name="author" content="UVE">
 <link rel="canonical" href="https://uve1048.github.io/hrnet-footprint-trainer/">
 <meta property="og:type" content="website">
@@ -19,7 +19,8 @@
 <meta name="twitter:description" content="公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/HRNet-Footprint-Trainer/main/assets/social-preview.png">
 <link rel="stylesheet" href="/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "HRNet-Footprint-Trainer", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。", "url": "https://uve1048.github.io/hrnet-footprint-trainer/", "codeRepository": "https://github.com/UVE1048/HRNet-Footprint-Trainer", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "建筑物分割训练, 语义分割训练, HRNet-W48, MMSegmentation, OpenMMLab, 遥感深度学习, 滑窗切片, 大图推理, 数据集生成, 建筑物提取, HRNet training, remote sensing segmentation", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+<link rel="alternate" type="text/markdown" href="https://uve1048.github.io/hrnet-footprint-trainer/index.md">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "HRNet-Footprint-Trainer", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。", "url": "https://uve1048.github.io/hrnet-footprint-trainer/", "codeRepository": "https://github.com/UVE1048/HRNet-Footprint-Trainer", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "建筑物分割训练, 语义分割训练, HRNet-W48, MMSegmentation, OpenMMLab, 遥感深度学习, 滑窗切片, 大图推理, 数据集生成, 建筑物提取, HRNet training, remote sensing segmentation, 建筑物分割训练, HRNet 训练脚本, 遥感分割训练模板, 建筑物提取模型训练, building segmentation training, HRNet segmentation pipeline", "alternateName": ["建筑物分割训练", "HRNet 训练脚本", "遥感分割训练模板", "建筑物提取模型训练", "building segmentation training", "HRNet segmentation pipeline"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "全部项目", "item": "https://uve1048.github.io/"}, {"@type": "ListItem", "position": 2, "name": "HRNet-Footprint-Trainer", "item": "https://uve1048.github.io/hrnet-footprint-trainer/"}]}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "怎么用自己的数据训练一个建筑物提取模型？", "acceptedAnswer": {"@type": "Answer", "text": "准备正射影像 .tif 与建筑物轮廓 .shp（坐标系必须一致），填进 prepare/DATA.TXT，运行 prepare_dataset_multiprocess.py 生成切片数据集，再运行 train.py 训练，最后用 predict.py 对大图做滑窗推理。"}}, {"@type": "Question", "name": "影像太大装不进显存怎么办？", "acceptedAnswer": {"@type": "Answer", "text": "训练阶段用 1024 滑窗、512 步长切片；推理阶段用重叠滑窗预测再拼接。两处都靠重叠消除边缘效应与拼缝断层。"}}, {"@type": "Question", "name": "正射影像的黑边会干扰训练吗？", "acceptedAnswer": {"@type": "Answer", "text": "默认已处理。MaskNoData 变换会把纯黑 (0,0,0) 与纯白 (255,255,255) 区域在标签里置为 ignore_index，算 loss 时完全跳过，模型不会因为「把黑边预测成背景」被惩罚。"}}, {"@type": "Question", "name": "训练需要多少标注数据？", "acceptedAnswer": {"@type": "Answer", "text": "这项任务的边界精度高度依赖标注质量而非数量。标签与影像套合不准时，模型学到的是系统性边界偏移，加数据也无法纠正。训之前务必抽几处叠加检查。"}}, {"@type": "Question", "name": "mmcv 装不上 / 编译失败怎么办？", "acceptedAnswer": {"@type": "Answer", "text": "换 pip install mmcv-lite>=2.1.0。train.py 里已有一行版本号 hack 绕过 MMSegmentation 的强校验，predict.py 里内置 mmcv.ops 的 polyfill，不需要 CUDA 算子也能推理。"}}]}]</script>
 </head>
 <body style="--accent:#7c3aed">
 <header class="top"><div class="wrap">
@@ -30,16 +31,21 @@
 </nav>
 </div></header>
 <div class="wrap">
+  <nav class="bc" aria-label="breadcrumb"><a href="/">全部项目</a> <span>/</span> <b>HRNet-Footprint-Trainer</b></nav>
   <div class="hero">
-    <a class="backlink" href="/">← 全部项目</a>
     <span class="eyebrow">在自有影像上训练建筑物分割模型</span>
     <h1>用你自己的影像训一个建筑分割模型</h1>
     <p class="lede">公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。</p>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/HRNet-Footprint-Trainer">查看源码</a>
-      <a class="btn" href="https://github.com/UVE1048/HRNet-Footprint-Trainer/stargazers">Star</a>
+      <a class="btn" href="https://uve1048.github.io/hrnet-footprint-trainer/index.md">Markdown 版</a>
     </div>
   </div>
+
+  <section>
+    <h2>别名与同义词</h2>
+    <div class="aliases"><span class="al">建筑物分割训练</span><span class="al">HRNet 训练脚本</span><span class="al">遥感分割训练模板</span><span class="al">建筑物提取模型训练</span><span class="al">building segmentation training</span><span class="al">HRNet segmentation pipeline</span></div>
+  </section>
 
   <section>
     <h2>你会遇到的问题</h2>
@@ -82,14 +88,20 @@ python train.py</code></pre>
   </section>
 
   <section>
-    <h2>继续</h2>
+    <h2>常见问题</h2>
+    <div class="faq"><details><summary>怎么用自己的数据训练一个建筑物提取模型？</summary><p>准备正射影像 .tif 与建筑物轮廓 .shp（坐标系必须一致），填进 prepare/DATA.TXT，运行 prepare_dataset_multiprocess.py 生成切片数据集，再运行 train.py 训练，最后用 predict.py 对大图做滑窗推理。</p></details>
+<details><summary>影像太大装不进显存怎么办？</summary><p>训练阶段用 1024 滑窗、512 步长切片；推理阶段用重叠滑窗预测再拼接。两处都靠重叠消除边缘效应与拼缝断层。</p></details>
+<details><summary>正射影像的黑边会干扰训练吗？</summary><p>默认已处理。MaskNoData 变换会把纯黑 (0,0,0) 与纯白 (255,255,255) 区域在标签里置为 ignore_index，算 loss 时完全跳过，模型不会因为「把黑边预测成背景」被惩罚。</p></details>
+<details><summary>训练需要多少标注数据？</summary><p>这项任务的边界精度高度依赖标注质量而非数量。标签与影像套合不准时，模型学到的是系统性边界偏移，加数据也无法纠正。训之前务必抽几处叠加检查。</p></details>
+<details><summary>mmcv 装不上 / 编译失败怎么办？</summary><p>换 pip install mmcv-lite&gt;=2.1.0。train.py 里已有一行版本号 hack 绕过 MMSegmentation 的强校验，predict.py 里内置 mmcv.ops 的 polyfill，不需要 CUDA 算子也能推理。</p></details></div>
+  </section>
+
+  <section>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/HRNet-Footprint-Trainer">在 GitHub 上查看 HRNet-Footprint-Trainer</a>
     </div>
   </section>
 </div>
-<footer><div class="wrap">
-  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
-</div></footer>
+<footer><div class="wrap">以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a></div></footer>
 </body>
 </html>

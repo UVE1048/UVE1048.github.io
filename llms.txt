@@ -1,0 +1,57 @@
+# UVE · 三维 GIS 与遥感影像处理开源工具
+
+> 面向实景三维生产链路的开源工具集合：三维模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。
+
+这些工具解决的是实景三维生产里通常只能靠商业软件完成的环节，强调可脚本化、可在无显卡服务器上批量运行。
+
+## 项目
+
+### ObjOrthoRender
+
+Convert textured OBJ meshes into georeferenced GeoTIFF orthophotos. Block-wise rendering, multiprocessing, three merge strategies, headless Docker (Xvfb+Mesa) so it runs without a GPU.
+
+- HTML: https://uve1048.github.io/obj-ortho-render/
+- Markdown: https://uve1048.github.io/obj-ortho-render/index.md
+- 源码: https://github.com/UVE1048/ObjOrthoRender
+- 别名: OBJ 转 DOM, 模型转正射影像, 三维模型出正射图, 倾斜摄影导出正射, orthophoto generator, mesh to orthophoto, OBJ2DOM, OBJ to GeoTIFF converter
+- 关键词: 正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio
+
+### Footprint-Creater
+
+Automatic building footprint extraction from orthophotos: HRNet segmentation with block inference and Nodata masking, then geometry-aware regularisation. Outputs Shapefiles.
+
+- HTML: https://uve1048.github.io/footprint-creater/
+- Markdown: https://uve1048.github.io/footprint-creater/index.md
+- 源码: https://github.com/UVE1048/Footprint-Creater
+- 别名: 建筑物提取工具, 房屋面提取, 建筑轮廓矢量化, 建筑物普查, building polygon extraction, footprint extraction tool, 建筑图斑提取
+- 关键词: 建筑物轮廓提取, 建筑物提取, 房屋面提取, 建筑图斑, 正射影像, 遥感影像, 语义分割, HRNet, Shapefile, 建筑物普查, 城市更新, building footprint, building extraction, semantic segmentation
+
+### HRNet-Footprint-Trainer
+
+Train HRNet building-footprint segmentation on your own imagery: sliding-window dataset generation, MMSegmentation training, large-image inference.
+
+- HTML: https://uve1048.github.io/hrnet-footprint-trainer/
+- Markdown: https://uve1048.github.io/hrnet-footprint-trainer/index.md
+- 源码: https://github.com/UVE1048/HRNet-Footprint-Trainer
+- 别名: 建筑物分割训练, HRNet 训练脚本, 遥感分割训练模板, 建筑物提取模型训练, building segmentation training, HRNet segmentation pipeline
+- 关键词: 建筑物分割训练, 语义分割训练, HRNet-W48, MMSegmentation, OpenMMLab, 遥感深度学习, 滑窗切片, 大图推理, 数据集生成, 建筑物提取, HRNet training, remote sensing segmentation
+
+### VideoFusion-Web
+
+Design and implementation notes for projecting live UAV video onto 3D reality-mesh scenes (Vue 3 + Cesium + EarthSDK3). Documentation only.
+
+- HTML: https://uve1048.github.io/video-fusion-web/
+- Markdown: https://uve1048.github.io/video-fusion-web/index.md
+- 源码: https://github.com/UVE1048/VideoFusion-Web
+- 别名: 视频融合示例, 无人机视频投影, 视频贴模型, 视频投射 SDK 用法, video projection onto 3D model, UAV video fusion
+- 关键词: 视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin
+
+## 机器可读索引
+
+- 全量文本: https://uve1048.github.io/llms-full.txt
+- Markdown 首页: https://uve1048.github.io/index.md
+- Sitemap: https://uve1048.github.io/sitemap.xml
+
+## 许可
+
+代码与文档均以 MIT 协议发布（VideoFusion-Web 为纯文档仓库）。

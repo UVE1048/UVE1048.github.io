@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>把无人机画面直接投到三维模型上 — VideoFusion-Web</title>
 <meta name="description" content="与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。">
-<meta name="keywords" content="视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin">
+<meta name="keywords" content="视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin, 视频融合示例, 无人机视频投影, 视频贴模型, 视频投射 SDK 用法, video projection onto 3D model, UAV video fusion">
 <meta name="author" content="UVE">
 <link rel="canonical" href="https://uve1048.github.io/video-fusion-web/">
 <meta property="og:type" content="website">
@@ -19,7 +19,8 @@
 <meta name="twitter:description" content="与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/VideoFusion-Web/main/assets/social-preview.png">
 <link rel="stylesheet" href="/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "VideoFusion-Web", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。", "url": "https://uve1048.github.io/video-fusion-web/", "codeRepository": "https://github.com/UVE1048/VideoFusion-Web", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+<link rel="alternate" type="text/markdown" href="https://uve1048.github.io/video-fusion-web/index.md">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "VideoFusion-Web", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。", "url": "https://uve1048.github.io/video-fusion-web/", "codeRepository": "https://github.com/UVE1048/VideoFusion-Web", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "视频融合, 视频投射, 视频投影, 无人机视频, 三维实景, 倾斜摄影, 数字孪生, Cesium, EarthSDK3, 相机位姿, 视锥, 指挥中心大屏, video fusion, projection mapping, digital twin, 视频融合示例, 无人机视频投影, 视频贴模型, 视频投射 SDK 用法, video projection onto 3D model, UAV video fusion", "alternateName": ["视频融合示例", "无人机视频投影", "视频贴模型", "视频投射 SDK 用法", "video projection onto 3D model", "UAV video fusion"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "全部项目", "item": "https://uve1048.github.io/"}, {"@type": "ListItem", "position": 2, "name": "VideoFusion-Web", "item": "https://uve1048.github.io/video-fusion-web/"}]}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "怎么把无人机视频投射到三维模型表面？", "acceptedAnswer": {"@type": "Answer", "text": "用 EarthSDK3 的 ESVideoFusion 对象，绑定一个 <video> 元素，按无人机的经纬高、姿态、FOV、画幅把这路视频投影到倾斜摄影模型上。"}}, {"@type": "Question", "name": "投影位置总是偏一点怎么调？", "acceptedAnswer": {"@type": "Answer", "text": "位置、姿态、FOV、画幅是一组强耦合参数，改一个就要重新核对落点。推荐做法是在场景里放几个已知坐标的地面标记（路口、楼角），让视频里的同一地物正好压上去。"}}, {"@type": "Question", "name": "为什么同时只能开一路视频投射？", "acceptedAnswer": {"@type": "Answer", "text": "这是刻意的产品逻辑。多路同时投影在视觉上互相干扰（半透明叠加），而且 WebGL 下多路视频纹理的显存开销很陡，容易掉帧。"}}, {"@type": "Question", "name": "Cesium 里视频纹理有延迟怎么办？", "acceptedAnswer": {"@type": "Answer", "text": "切片式 HLS 天然有数秒延迟。要低延迟得换 WebRTC，但浏览器端解码与 Cesium 的兼容性需要重新验证。"}}]}]</script>
 </head>
 <body style="--accent:#0891b2">
 <header class="top"><div class="wrap">
@@ -30,16 +31,21 @@
 </nav>
 </div></header>
 <div class="wrap">
+  <nav class="bc" aria-label="breadcrumb"><a href="/">全部项目</a> <span>/</span> <b>VideoFusion-Web</b></nav>
   <div class="hero">
-    <a class="backlink" href="/">← 全部项目</a>
     <span class="eyebrow">无人机视频融合投射到三维实景</span>
     <h1>把无人机画面直接投到三维模型上</h1>
     <p class="lede">与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。</p>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/VideoFusion-Web">查看源码</a>
-      <a class="btn" href="https://github.com/UVE1048/VideoFusion-Web/stargazers">Star</a>
+      <a class="btn" href="https://uve1048.github.io/video-fusion-web/index.md">Markdown 版</a>
     </div>
   </div>
+
+  <section>
+    <h2>别名与同义词</h2>
+    <div class="aliases"><span class="al">视频融合示例</span><span class="al">无人机视频投影</span><span class="al">视频贴模型</span><span class="al">视频投射 SDK 用法</span><span class="al">video projection onto 3D model</span><span class="al">UAV video fusion</span></div>
+  </section>
 
   <section>
     <h2>你会遇到的问题</h2>
@@ -76,14 +82,19 @@ npm run dev                                  # 前端</code></pre>
   </section>
 
   <section>
-    <h2>继续</h2>
+    <h2>常见问题</h2>
+    <div class="faq"><details><summary>怎么把无人机视频投射到三维模型表面？</summary><p>用 EarthSDK3 的 ESVideoFusion 对象，绑定一个 &lt;video&gt; 元素，按无人机的经纬高、姿态、FOV、画幅把这路视频投影到倾斜摄影模型上。</p></details>
+<details><summary>投影位置总是偏一点怎么调？</summary><p>位置、姿态、FOV、画幅是一组强耦合参数，改一个就要重新核对落点。推荐做法是在场景里放几个已知坐标的地面标记（路口、楼角），让视频里的同一地物正好压上去。</p></details>
+<details><summary>为什么同时只能开一路视频投射？</summary><p>这是刻意的产品逻辑。多路同时投影在视觉上互相干扰（半透明叠加），而且 WebGL 下多路视频纹理的显存开销很陡，容易掉帧。</p></details>
+<details><summary>Cesium 里视频纹理有延迟怎么办？</summary><p>切片式 HLS 天然有数秒延迟。要低延迟得换 WebRTC，但浏览器端解码与 Cesium 的兼容性需要重新验证。</p></details></div>
+  </section>
+
+  <section>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/VideoFusion-Web">在 GitHub 上查看 VideoFusion-Web</a>
     </div>
   </section>
 </div>
-<footer><div class="wrap">
-  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
-</div></footer>
+<footer><div class="wrap">以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a></div></footer>
 </body>
 </html>

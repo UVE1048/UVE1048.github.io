@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>把 OBJ 模型变成能进 GIS 的正射影像 — ObjOrthoRender</title>
 <meta name="description" content="倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。">
-<meta name="keywords" content="正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio">
+<meta name="keywords" content="正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio, OBJ 转 DOM, 模型转正射影像, 三维模型出正射图, 倾斜摄影导出正射, orthophoto generator, mesh to orthophoto, OBJ2DOM, OBJ to GeoTIFF converter">
 <meta name="author" content="UVE">
 <link rel="canonical" href="https://uve1048.github.io/obj-ortho-render/">
 <meta property="og:type" content="website">
@@ -19,7 +19,8 @@
 <meta name="twitter:description" content="倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
 <link rel="stylesheet" href="/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "ObjOrthoRender", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。", "url": "https://uve1048.github.io/obj-ortho-render/", "codeRepository": "https://github.com/UVE1048/ObjOrthoRender", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}</script>
+<link rel="alternate" type="text/markdown" href="https://uve1048.github.io/obj-ortho-render/index.md">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "ObjOrthoRender", "applicationCategory": "DeveloperApplication", "operatingSystem": "Windows, Linux, macOS", "description": "倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。", "url": "https://uve1048.github.io/obj-ortho-render/", "codeRepository": "https://github.com/UVE1048/ObjOrthoRender", "license": "https://opensource.org/licenses/MIT", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}, "keywords": "正射影像, DOM, 数字正射影像图, OBJ 转 GeoTIFF, 倾斜摄影, 实景三维, 摄影测量, 分块渲染, 无显卡服务器, orthophoto, orthomosaic, OBJ to GeoTIFF, pyrender, rasterio, OBJ 转 DOM, 模型转正射影像, 三维模型出正射图, 倾斜摄影导出正射, orthophoto generator, mesh to orthophoto, OBJ2DOM, OBJ to GeoTIFF converter", "alternateName": ["OBJ 转 DOM", "模型转正射影像", "三维模型出正射图", "倾斜摄影导出正射", "orthophoto generator", "mesh to orthophoto", "OBJ2DOM", "OBJ to GeoTIFF converter"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "全部项目", "item": "https://uve1048.github.io/"}, {"@type": "ListItem", "position": 2, "name": "ObjOrthoRender", "item": "https://uve1048.github.io/obj-ortho-render/"}]}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "怎么把 OBJ 三维模型转成带地理坐标的正射影像？", "acceptedAnswer": {"@type": "Answer", "text": "用 render_orthophotos.py，指定 --input 指向 OBJ 所在目录、--output 输出目录、--metadata 指向 metadata.xml。程序会递归查找 .obj，逐块渲染并写入带 SRS 与 SRSOrigin 的 GeoTIFF。"}}, {"@type": "Question", "name": "倾斜摄影模型怎么导出 DOM（数字正射影像图）？", "acceptedAnswer": {"@type": "Answer", "text": "先把 3D Tiles 转成 OBJ，再用本项目渲染成 GeoTIFF。倾斜摄影模型内部再切 tile 渲染，所以单个模型面数极大时也不会撞上显存或纹理尺寸上限。"}}, {"@type": "Question", "name": "没有独立显卡的服务器能跑吗？", "acceptedAnswer": {"@type": "Answer", "text": "能。Docker 镜像内置 Xvfb 与 Mesa 软件 OpenGL，纯 CPU 渲染，速度慢于 GPU 但不会失败。本机运行时需要可用的 OpenGL 3.3+。"}}, {"@type": "Question", "name": "输出的正射影像在地图上整体偏移怎么办？", "acceptedAnswer": {"@type": "Answer", "text": "检查 metadata.xml 里的 SRSOrigin。它是模型局部坐标原点对应的真实地理坐标，必须与出模时一致。另外确认 SRS 写的是 EPSG:3857 而不是 EPSG:4326。"}}, {"@type": "Question", "name": "支持哪些坐标系？", "acceptedAnswer": {"@type": "Answer", "text": "任意 EPSG 代码，读取 metadata.xml 的 SRS 字段并写入输出 GeoTIFF，QGIS 与 ArcGIS 打开即定位。"}}]}]</script>
 </head>
 <body style="--accent:#2f6feb">
 <header class="top"><div class="wrap">
@@ -30,16 +31,21 @@
 </nav>
 </div></header>
 <div class="wrap">
+  <nav class="bc" aria-label="breadcrumb"><a href="/">全部项目</a> <span>/</span> <b>ObjOrthoRender</b></nav>
   <div class="hero">
-    <a class="backlink" href="/">← 全部项目</a>
     <span class="eyebrow">OBJ 三维模型转带地理参考的正射影像</span>
     <h1>把 OBJ 模型变成能进 GIS 的正射影像</h1>
     <p class="lede">倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。</p>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/ObjOrthoRender">查看源码</a>
-      <a class="btn" href="https://github.com/UVE1048/ObjOrthoRender/stargazers">Star</a>
+      <a class="btn" href="https://uve1048.github.io/obj-ortho-render/index.md">Markdown 版</a>
     </div>
   </div>
+
+  <section>
+    <h2>别名与同义词</h2>
+    <div class="aliases"><span class="al">OBJ 转 DOM</span><span class="al">模型转正射影像</span><span class="al">三维模型出正射图</span><span class="al">倾斜摄影导出正射</span><span class="al">orthophoto generator</span><span class="al">mesh to orthophoto</span><span class="al">OBJ2DOM</span><span class="al">OBJ to GeoTIFF converter</span></div>
+  </section>
 
   <section>
     <h2>你会遇到的问题</h2>
@@ -82,14 +88,20 @@ python render_orthophotos.py \
   </section>
 
   <section>
-    <h2>继续</h2>
+    <h2>常见问题</h2>
+    <div class="faq"><details><summary>怎么把 OBJ 三维模型转成带地理坐标的正射影像？</summary><p>用 render_orthophotos.py，指定 --input 指向 OBJ 所在目录、--output 输出目录、--metadata 指向 metadata.xml。程序会递归查找 .obj，逐块渲染并写入带 SRS 与 SRSOrigin 的 GeoTIFF。</p></details>
+<details><summary>倾斜摄影模型怎么导出 DOM（数字正射影像图）？</summary><p>先把 3D Tiles 转成 OBJ，再用本项目渲染成 GeoTIFF。倾斜摄影模型内部再切 tile 渲染，所以单个模型面数极大时也不会撞上显存或纹理尺寸上限。</p></details>
+<details><summary>没有独立显卡的服务器能跑吗？</summary><p>能。Docker 镜像内置 Xvfb 与 Mesa 软件 OpenGL，纯 CPU 渲染，速度慢于 GPU 但不会失败。本机运行时需要可用的 OpenGL 3.3+。</p></details>
+<details><summary>输出的正射影像在地图上整体偏移怎么办？</summary><p>检查 metadata.xml 里的 SRSOrigin。它是模型局部坐标原点对应的真实地理坐标，必须与出模时一致。另外确认 SRS 写的是 EPSG:3857 而不是 EPSG:4326。</p></details>
+<details><summary>支持哪些坐标系？</summary><p>任意 EPSG 代码，读取 metadata.xml 的 SRS 字段并写入输出 GeoTIFF，QGIS 与 ArcGIS 打开即定位。</p></details></div>
+  </section>
+
+  <section>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048/ObjOrthoRender">在 GitHub 上查看 ObjOrthoRender</a>
     </div>
   </section>
 </div>
-<footer><div class="wrap">
-  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
-</div></footer>
+<footer><div class="wrap">以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a></div></footer>
 </body>
 </html>

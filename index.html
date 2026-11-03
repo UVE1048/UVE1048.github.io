@@ -19,7 +19,8 @@
 <meta name="twitter:description" content="三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/UVE1048/ObjOrthoRender/main/assets/social-preview.png">
 <link rel="stylesheet" href="/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "UVE · 三维 GIS 与遥感开源工具", "description": "三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。", "url": "https://uve1048.github.io/", "hasPart": [{"@type": "SoftwareApplication", "name": "ObjOrthoRender", "url": "https://uve1048.github.io/obj-ortho-render/"}, {"@type": "SoftwareApplication", "name": "Footprint-Creater", "url": "https://uve1048.github.io/footprint-creater/"}, {"@type": "SoftwareApplication", "name": "HRNet-Footprint-Trainer", "url": "https://uve1048.github.io/hrnet-footprint-trainer/"}, {"@type": "SoftwareApplication", "name": "VideoFusion-Web", "url": "https://uve1048.github.io/video-fusion-web/"}]}</script>
+<link rel="alternate" type="text/markdown" href="https://uve1048.github.io/index.md">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "CollectionPage", "name": "UVE · 三维 GIS 与遥感开源工具", "description": "三维 GIS、摄影测量与遥感影像处理的开源工具：OBJ 模型转正射影像、正射影像建筑物轮廓提取、建筑物分割模型训练、无人机视频融合投射。全部 MIT 开源。", "url": "https://uve1048.github.io/", "hasPart": [{"@type": "SoftwareApplication", "name": "ObjOrthoRender", "url": "https://uve1048.github.io/obj-ortho-render/", "description": "倾斜摄影生产链里，模型通常停留在三维。制图、变化检测、建筑物提取都需要二维正射影像。这个工具把「三维模型 → 带坐标系的 GeoTIFF」这一步做成了命令行操作。"}, {"@type": "SoftwareApplication", "name": "Footprint-Creater", "url": "https://uve1048.github.io/footprint-creater/", "description": "给一张带地理参考的正射影像，输出建筑物轮廓 Shapefile。和「跑个分割模型就完事」的区别在于后处理：从像素掩码到可入库的图斑，中间还有校验和规则化两步。"}, {"@type": "SoftwareApplication", "name": "HRNet-Footprint-Trainer", "url": "https://uve1048.github.io/hrnet-footprint-trainer/", "description": "公开数据集上训好的模型，换到你的城市就未必准。这个仓库把「大影像加矢量标签 → 切片数据集 → 训练 → 大图推理」整条链路补齐了。"}, {"@type": "SoftwareApplication", "name": "VideoFusion-Web", "url": "https://uve1048.github.io/video-fusion-web/", "description": "与其在角落放个小窗让操作员心算对应关系，不如把画面按相机位姿投影到模型表面 —— 画面和地物处在同一空间，遮挡、朝向、覆盖范围全部自洽。"}]}, {"@context": "https://schema.org", "@type": "WebSite", "name": "UVE · 开源工具", "url": "https://uve1048.github.io/", "inLanguage": "zh-CN", "author": {"@type": "Person", "name": "UVE", "url": "https://github.com/UVE1048"}}]</script>
 </head>
 <body style="--accent:#1a56db">
 <header class="top"><div class="wrap">
@@ -37,7 +38,7 @@
     建筑物分割模型训练、无人机视频融合投射。全部以 MIT 协议开源。</p>
     <div class="btnrow">
       <a class="btn primary" href="https://github.com/UVE1048">GitHub</a>
-      <a class="btn" href="#projects">浏览项目</a>
+      <a class="btn" href="/index.md">Markdown 版</a>
     </div>
   </div>
 
@@ -88,10 +89,10 @@
     <h2>关于</h2>
     <p style="color:#495362">这些工具都来自实际生产中的卡点：批处理几千个模型、在没有显卡的服务器上出图、
     让矢量化结果真的能入库、把无人机画面投到三维场景上。如果你也遇到同样的问题，欢迎在仓库提 Issue。</p>
+    <p style="color:#8a93a0;font-size:14.5px">机器可读索引：<a href="/llms.txt">/llms.txt</a> ·
+    <a href="/llms-full.txt">/llms-full.txt</a> · <a href="/sitemap.xml">/sitemap.xml</a></p>
   </section>
 </div>
-<footer><div class="wrap">
-  以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a>
-</div></footer>
+<footer><div class="wrap">以 MIT 协议开源 · <a href="https://github.com/UVE1048">github.com/UVE1048</a></div></footer>
 </body>
 </html>
